@@ -1,0 +1,48 @@
+***2 часть – усложнить написанную программу, введя по своему усмотрению в условие минимум одно ограничение на характеристики объектов (которое будет сокращать количество переборов)  и целевую функцию для нахождения оптимального  решения. На плоскости задано К точек. 
+Сформировать все возможные варианты выбора множества точек из них на проверку того, что они являются вершинами квадрата. (В этой программе добавлены ограничение на точки, 
+расположенные на одной оси, и целевую функцию для нахождения квадрата с максимальной площадью.)***
+
+import itertools
+
+def distance(p1, p2):
+    return (p2[0] - p1[0])**2 + (p2[1] - p1[1])**2
+
+def is_square(p1, p2, p3, p4):
+    distances = [distance(p1, p2), distance(p1, p3), distance(p1, p4),
+                 distance(p2, p3), distance(p2, p4), distance(p3, p4)]
+    distances.sort()
+    return distances[0] > 0 and distances[0] == distances[1] == distances[2] == distances[3] and distances[4] == distances[5]
+
+def find_squares(points):
+    squares = []
+    for square in itertools.combinations(points, 4):
+        if all(p[0] == square[0][0] or p[1] == square[0][1] for p in square):
+            if is_square(*square):
+                squares.append(square)
+    return squares
+
+def calculate_total_area(squares):
+    total_area = 0
+    for square in squares:
+        side_length = distance(square[0], square[1])**0.5
+        area = side_length ** 2
+        total_area += area
+    return total_area
+
+def main():
+    k = int(input("Введите количество точек: "))
+    points = []
+    for i in range(k):
+        x, y = map(int, input(f"Введите координаты {i+1} точки (через пробел): ").split())
+        points.append((x, y))
+    
+    squares = find_squares(points)
+    print("Возможные вершины квадрата:")
+    for square in squares:
+        print(square)
+    
+    max_area_square = max(squares, key=lambda square: distance(square[0], square[1]))
+    print(f"Максимальная площадь квадрата: {calculate_total_area([max_area_square])}")
+
+if __name__ == "__main__":
+    main()
