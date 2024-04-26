@@ -1,0 +1,35 @@
+***1 часть – написать программу в соответствии со своим вариантом задания. Написать 2 варианта формирования (алгоритмический и с помощью функций Питона), сравнив по времени их выполнение. На плоскости задано К точек. 
+Сформировать все возможные варианты выбора множества точек из них на проверку того, что они являются вершинами квадрата.***
+
+import itertools
+
+def distance(p1, p2):
+    return (p2[0] - p1[0])**2 + (p2[1] - p1[1])**2
+
+def is_square(p1, p2, p3, p4):
+    distances = [distance(p1, p2), distance(p1, p3), distance(p1, p4),
+                 distance(p2, p3), distance(p2, p4), distance(p3, p4)]
+    distances.sort()
+    return distances[0] > 0 and distances[0] == distances[1] == distances[2] == distances[3] and distances[4] == distances[5]
+
+def find_squares(points):
+    squares = []
+    for square in itertools.combinations(points, 4):
+        if is_square(*square):
+            squares.append(square)
+    return squares
+
+def main():
+    k = int(input("Введите количество точек: "))
+    points = []
+    for i in range(k):
+        x, y = map(int, input(f"Введите координаты {i+1} точки (через пробел): ").split())
+        points.append((x, y))
+    
+    squares = find_squares(points)
+    print("Возможные вершины квадрата:")
+    for square in squares:
+        print(square)
+
+if __name__ == "__main__":
+    main()
