@@ -9,34 +9,47 @@ def distance(p1, p2):
     return (p2[0] - p1[0])**2 + (p2[1] - p1[1])**2
 
 def is_square(p1, p2, p3, p4):
-    distances = [distance(p1, p2), distance(p1, p3), distance(p1, p4), distance(p2, p3), distance(p2, p4), distance(p3, p4)]
+    distances = [distance(p1, p2), distance(p1, p3), distance(p1, p4),
+                 distance(p2, p3), distance(p2, p4), distance(p3, p4)]
     distances.sort()
     return distances[0] > 0 and distances[0] == distances[1] == distances[2] == distances[3] and distances[4] == distances[5]
 
-def calculate_area(p1, p2, p3, p4):
-    side = distance(p1, p2)
-    return side**2
-
-def find_squares(points, limit):
+def find_squares(points):
     squares = []
+    max_area = 0
     for square in itertools.combinations(points, 4):
-        if is_square(*square):
-            if calculate_area(*square) >= limit:
-                squares.append(square)
+        x_values = [point[0] for point in square]
+        y_values = [point[1] for point in square]
+        if all(x > 0 and y > 0 for x, y in zip(x_values, y_values)):
+            side = distance(square[0], square[1])**0.5
+            area = side**2
+            if is_square(*square) and area > max_area:
+                squares = [square]
+                max_area = area
     return squares
 
 def main():
-    k = int(input("Введите количество точек: "))
+    while True:
+        try:
+            k = int(input("Введите количество точек: "))
+            break
+        except ValueError:
+            print("Ошибка! Пожалуйста, введите количество точек целым числом.")
+
     points = []
     for i in range(k):
-        x, y = map(int, input(f"Введите координаты {i+1} точки (через пробел): ").split())
+        while True:
+            try:
+                x, y = map(int, input(f"Введите координаты {i+1} точки (через пробел): ").split())
+                if x <= 0 or y <= 0:
+                    raise ValueError
+                break
+            except ValueError:
+                print("Ошибка! Пожалуйста, введите две положительные координаты для точки.")
         points.append((x, y))
     
-    limit = float(input("Введите минимальное значение площади квадрата: "))
-    
-    squares = find_squares(points, limit)
-    
-    print("Возможные вершины квадрата:")
+    squares = find_squares(points)
+    print("Квадрат с максимальной площадью и вершинами в одном квадранте:")
     for square in squares:
         print(square)
 
