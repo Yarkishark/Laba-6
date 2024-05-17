@@ -26,13 +26,17 @@ def find_squares(points):
             if is_square(*square) and area > max_area:
                 squares = [square]
                 max_area = area
+               
     return squares
 
 def main():
     while True:
         try:
             k = int(input("Введите количество точек: "))
-            break
+            if k <= 3:
+                print("Ошибка! Введите число равное 4 или кратное четырём.")
+            else:
+                break
         except ValueError:
             print("Ошибка! Пожалуйста, введите количество точек целым числом.")
 
@@ -41,6 +45,9 @@ def main():
         while True:
             try:
                 x, y = map(int, input(f"Введите координаты {i+1} точки (через пробел): ").split())
+                if (x, y) in points:
+                    print("Ошибка! Точка с такими координатами уже была введена. Пожалуйста, введите другие координаты.")
+                    continue
                 if x <= 0 or y <= 0:
                     raise ValueError
                 break
@@ -49,9 +56,12 @@ def main():
         points.append((x, y))
     
     squares = find_squares(points)
-    print("Квадрат с максимальной площадью и вершинами в одном квадранте:")
-    for square in squares:
-        print(square)
+    if squares:
+        print("Квадрат с максимальной площадью и вершинами в одном квадранте:")
+        for square in squares:
+            print(square)
+    else:
+        print("Из данных точек невозможно образовать квадрат(ы).")
 
 if __name__ == "__main__":
     main()
